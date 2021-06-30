@@ -3,7 +3,7 @@
 
 [![Pypi](https://img.shields.io/pypi/v/pygeofilter_elasticsearch.svg)](https://pypi.python.org/pypi/pygeofilter_elasticsearch)
 
-[![Travis](https://img.shields.io/travis/rsmith013/pygeofilter_elasticsearch.svg)](https://travis-ci.org/rsmith013/pygeofilter_elasticsearch)
+[![Build](https://github.com/github/docs/actions/workflows/tests.yml/badge.svg)]
 
 [![Documentation](https://readthedocs.org/projects/pygeofilter-elasticsearch/badge/?version=latest)](https://pygeofilter-elasticsearch.readthedocs.io/en/latest/?badge=latest)
 
