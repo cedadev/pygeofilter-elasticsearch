@@ -21,6 +21,7 @@ with open("README.md") as readme_file:
 
 requirements = [
     'pygeofilter',
+    'elasticsearch_dsl'
 ]
 
 setup_requirements = [ ]
