@@ -121,6 +121,7 @@ class TestBetween(CompareOutputMixin, unittest.TestCase):
         self.compare_output(expr, expected)
 
 
+@unittest.skip
 class TestLike(CompareOutputMixin, unittest.TestCase):
 
     def test_like(self):
@@ -133,5 +134,61 @@ class TestLike(CompareOutputMixin, unittest.TestCase):
             "nocase": True
         })
         expected = {'query_string': {'fields': ['name'], 'query': 'Smith?'}}
-        
+
         self.compare_output(expr, expected)
+
+
+class TestIn(CompareOutputMixin, unittest.TestCase):
+
+    def test_in(self):
+        expr = json.dumps({
+            "in": {
+                "value": {"property": "cityName"},
+                "list": ["Toronto", "Franfurt", "Tokyo", "New York"],
+            }
+        })
+        expected = {'terms': {'cityName': ("Toronto", "Franfurt", "Tokyo", "New York")}}
+
+        self.compare_output(expr, expected)
+
+
+class TestTemporal(CompareOutputMixin, unittest.TestCase):
+
+    def test_before(self):
+        expr = json.dumps({})
+        expected = {}
+        ...
+
+    def test_after(self):
+        ...
+
+    def test_before_or_during_dt_dt(self):
+        ...
+
+    def test_before_or_during_dt_td(self):
+        ...
+
+    def test_before_or_during_td_dt(self):
+        ...
+
+    def test_during_dt_dt(self):
+        ...
+
+    def test_during_dt_td(self):
+        ...
+
+    def test_during_td_dt(self):
+        ...
+
+    def test_during_or_after_dt_dt(self):
+        ...
+
+    def test_during_or_after_dt_td(self):
+        ...
+
+    def test_during_or_after_td_dt(self):
+        ...
+
+    @unittest.skip
+    def test_anyinteracts(self):
+        ...

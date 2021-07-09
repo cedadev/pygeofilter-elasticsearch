@@ -72,6 +72,23 @@ class ElasticsearchFilterEvaluator(Evaluator):
             node.not_
         )
 
+    @handle(ast.TemporalPredicate, subclasses=True)
+    def temporal(self, node, lhs, rhs):
+        return filters.temporal(
+            lhs,
+            rhs,
+            node.op.value
+        )
+
+    @handle(ast.SpatialComparisonPredicate, subclasses=True)
+    def spatial_operation(self, node, lhs, rhs):
+        ...
+
+    @handle(ast.BBox)
+    def bbox(self, node, lhs):
+        ...
+
+
 
 
 def to_filter(ast, field_mapping=None):

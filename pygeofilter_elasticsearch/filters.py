@@ -12,8 +12,9 @@ from elasticsearch_dsl import Q
 from elasticsearch_dsl.query import Query
 from operator import and_, or_
 from functools import reduce
+from datetime import datetime, timedelta
 
-from typing import List, Union
+from typing import List, Union, Tuple
 
 
 def attribute(name: str, field_mapping: dict = None) -> None:
@@ -104,8 +105,7 @@ def between(lhs: str,
 
         :return: a comparison expression object
     """
-    print(lhs, low, high)
-    # assert isinstance(lhs, Query)
+    assert isinstance(lhs, str)
 
     q = Q('range', **{lhs: {'gte': low, 'lte': high}})
     return ~q if not_ else q
@@ -146,7 +146,7 @@ def like(lhs: str,
 
 
 def contains(lhs: str,
-             items: List,
+             items: Tuple,
              not_: bool =False) -> 'elasticsearch_dsl.query.Query':
     """ Create a filter to match elements attribute to be in a list of choices.
 
@@ -158,5 +158,52 @@ def contains(lhs: str,
     """
     assert isinstance(lhs, str)
 
-    q = Q(**{"%s__in" % lhs.name: items})
+    q = Q('terms', **{lhs: items})
     return ~q if not_ else q
+
+
+def temporal(lhs: str,
+             time_or_period: Union['datetime', Tuple['datetime'], Tuple['datetime', 'timedelta']],
+             op: str) -> 'elasticsearch_dsl.query.Query':
+    """ Create a temporal filter for the given temporal attribute.
+
+        :param lhs: the field to compare
+        :param time_or_period: the time instant or time span to use as a filter
+        :param op: the comparison operation. one of ``"BEFORE"``,
+                   ``"BEFORE OR DURING"``, ``"DURING"``, ``"DURING OR AFTER"``,
+                   ``"AFTER"``.
+        :return: a comparison expression object
+    """
+    assert isinstance(lhs, str)
+    assert op in (
+        "BEFORE",
+        "BEFORE OR DURING",
+        "DURING",
+        "DURING OR AFTER",
+        "AFTER",
+    )
+
+    low = None
+    high = None
+
+    if op in ("BEFORE", "AFTER"):
+        if op == "BEFORE":
+            high = time_or_period
+        else:
+            low = time_or_period
+    else:
+        low, high = time_or_period
+        assert isinstance(low, datetime) or isinstance(high, datetime)
+
+        if isinstance(low, timedelta):
+            low = high - low
+
+        if isinstance(high, timedelta):
+            high = low + high
+
+    if low and high:
+        return between(lhs, low, high)
+    elif low:
+        return compare(lhs,low,'>=')
+    else:
+        return compare(lhs, high, '<=')
