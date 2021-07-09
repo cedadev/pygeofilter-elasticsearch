@@ -3,8 +3,6 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
-
 __author__ = "Richard Smith"
 __contact__ = "richard.d.smith@stfc.ac.uk"
 __copyright__ = "Copyright 2018 United Kingdom Research and Innovation"
@@ -12,11 +10,6 @@ __license__ = "BSD - see LICENSE file in top-level package directory"
 
 
 from setuptools import setup, find_packages
-
-# One strategy for storing the overall version is to put it in the top-level
-# package's __init__ but Nb. __init__.py files are not needed to declare
-# packages in Python 3
-from pygeofilter_elasticsearch import __version__ as _package_version
 
 # Populate long description setting with content of README
 #
@@ -26,7 +19,9 @@ with open("README.md") as readme_file:
     _long_description = readme_file.read()
 
 
-requirements = [ ]
+requirements = [
+    'pygeofilter',
+]
 
 setup_requirements = [ ]
 
@@ -75,13 +70,13 @@ setup(
     long_description_content_type='text/markdown',
 
     include_package_data=True,
-    keywords='pygeofilter_elasticsearch',
-    name='pygeofilter_elasticsearch',
-    packages=find_packages(include=['pygeofilter_elasticsearch']),
+    keywords='pygeofilter,OGC, CQL',
+    name='pygeofilter-elasticsearch',
+    packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/rsmith013/pygeofilter_elasticsearch',
-    version=_package_version,
+    version='0.1.0',
     zip_safe=False,
 )
