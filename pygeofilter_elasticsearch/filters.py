@@ -17,17 +17,23 @@ from datetime import datetime, timedelta
 from typing import List, Union, Tuple
 
 
-def attribute(name: str, field_mapping: dict = None) -> None:
+def attribute(name: str, field_mapping: dict = None, field_default=None) -> str:
     """Create an attribute lookup expression using a field mapping dictionary.
 
     :param name: the field name to filter
-    :param field_mapping: lookup for field name
-    :return:
+    :param field_mapping: lookup for field name.
+    :param field_default: default value if field not in mapping.
+    Leave as None to use the field name as the default
+
+    :return: The attribute name
     """
+    if field_default:
+        field_default = field_default.substitute(name=name)
+
     if field_mapping:
-        field = field_mapping.get(name, name)
+        field = field_mapping.get(name, field_default or name)
     else:
-        field = name
+        field = field_default or name
 
     return field
 

@@ -17,8 +17,9 @@ from pygeofilter import values
 class ElasticsearchFilterEvaluator(Evaluator):
     """Filter evaluator for Elasticsearch."""
 
-    def __init__(self, field_mapping):
+    def __init__(self, field_mapping, field_default):
         self.field_mapping = field_mapping
+        self.field_default = field_default
 
     @handle(ast.Not)
     def not_(self, node, sub):
@@ -47,7 +48,7 @@ class ElasticsearchFilterEvaluator(Evaluator):
 
     @handle(ast.Attribute)
     def attribute(self, node):
-        return filters.attribute(node.name, self.field_mapping)
+        return filters.attribute(node.name, self.field_mapping, self.field_default)
 
     @handle(*values.LITERALS)
     def literal(self, node):
@@ -89,11 +90,12 @@ class ElasticsearchFilterEvaluator(Evaluator):
         ...
 
 
-
-
-def to_filter(ast, field_mapping=None):
+def to_filter(ast, field_mapping=None, field_default=None):
     """ Helper function to translate AST to Django Query expressions.
 
         :param ast: the abstract syntax tree
+        :param field_mapping: Lookup from field name to data model.
+        :param field_default: Default attribute value if not in lookup.
+        Leave as `None` to use the field name as the default.
     """
-    return ElasticsearchFilterEvaluator(field_mapping).evaluate(ast)
+    return ElasticsearchFilterEvaluator(field_mapping, field_default).evaluate(ast)
